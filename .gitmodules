@@ -1,0 +1,3 @@
+[submodule "IndicMT-Eval"]
+	path = IndicMT-Eval
+	url = git@github.com:AI4Bharat/IndicMT-Eval.git

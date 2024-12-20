@@ -1,6 +1,6 @@
 from typing import Sequence, Optional
 
-from .metrics import BLEU, CHRF, TER, BLEUScore, CHRFScore, TERScore
+from .metrics import BLEU, CHRF, TER, BLEUScore, CHRFScore, TERScore, BYTF, BYTFScore
 
 
 ######################################################################
@@ -153,6 +153,75 @@ def sentence_chrf(hypothesis: str,
         eps_smoothing=eps_smoothing)
     return metric.sentence_score(hypothesis, references)
 
+def corpus_bytf(hypotheses: Sequence[str],
+                references: Sequence[Sequence[str]],
+                byte_order: int = BYTF.BYTE_ORDER,
+                char_order: int = BYTF.CHAR_ORDER,
+                word_order: int = BYTF.WORD_ORDER,
+                beta: int = BYTF.BETA,
+                remove_whitespace: bool = True,
+                eps_smoothing: bool = False) -> BYTFScore:
+    """
+    Computes BYTF for a corpus against a single (or multiple) reference(s).
+    If `word_order` equals to 2, the metric is referred to as BYTF++.
+    If `char_order` equals to 6, the metric is referred to as BYTF++.
+
+    :param hypotheses: A sequence of hypothesis strings.
+    :param references: A sequence of reference documents with document being
+        defined as a sequence of reference strings.
+    :param byte_order: Byte n-gram order.
+    :param char_order: Character n-gram order.
+    :param word_order: Word n-gram order. If equals to 2, the metric is referred to as BYTF++.
+    :param beta: Determine the importance of recall w.r.t precision.
+    :param eps_smoothing: If `True`, applies epsilon smoothing similar
+    to reference bytF++.py, NLTK and Moses implementations. Otherwise,
+    it takes into account effective match order similar to sacreBLEU < 2.0.0.
+    :param remove_whitespace: If `True`, removes whitespaces prior to character n-gram extraction.
+    :return: A `BYTFScore` object.
+    """
+    metric = BYTF(
+        byte_order=byte_order,
+        char_order=char_order,
+        word_order=word_order,
+        beta=beta,
+        whitespace=not remove_whitespace,
+        eps_smoothing=eps_smoothing)
+    return metric.corpus_score(hypotheses, references)
+
+
+def sentence_bytf(hypothesis: str,
+                  references: Sequence[str],
+                  byte_order: int = BYTF.BYTE_ORDER,
+                  char_order: int = BYTF.CHAR_ORDER,
+                  word_order: int = BYTF.WORD_ORDER,
+                  beta: int = BYTF.BETA,
+                  remove_whitespace: bool = True,
+                  eps_smoothing: bool = False) -> BYTFScore:
+    """
+    Computes BYTF for a single sentence against a single (or multiple) reference(s).
+    If `word_order` equals to 2, the metric is referred to as BYTF++.
+    If `char_order` equals to 6, the metric is referred to as BYTF++.
+
+    :param hypothesis: A single hypothesis string.
+    :param references: A sequence of reference strings.
+    :param byte_order: Byte n-gram order.
+    :param char_order: Character n-gram order.
+    :param word_order: Word n-gram order. If equals to 2, the metric is referred to as BYTF++.
+    :param beta: Determine the importance of recall w.r.t precision.
+    :param eps_smoothing: If `True`, applies epsilon smoothing similar
+    to reference bytF++.py, NLTK and Moses implementations. Otherwise,
+    it takes into account effective match order similar to sacreBLEU < 2.0.0.
+    :param remove_whitespace: If `True`, removes whitespaces prior to character n-gram extraction.
+    :return: A `BYTFScore` object.
+    """
+    metric = BYTF(
+        byte_order=byte_order,
+        char_order=char_order,
+        word_order=word_order,
+        beta=beta,
+        whitespace=not remove_whitespace,
+        eps_smoothing=eps_smoothing)
+    return metric.sentence_score(hypothesis, references)
 
 def corpus_ter(hypotheses: Sequence[str],
                references: Sequence[Sequence[str]],

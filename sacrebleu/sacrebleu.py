@@ -142,6 +142,23 @@ def parse_args():
     chrf_args.add_argument('--chrf-eps-smoothing', action='store_true', default=False,
                            help='Enables epsilon smoothing similar to chrF++.py, NLTK and Moses; instead of effective order smoothing. (Default: %(default)s)')
 
+    # BytF-related arguments
+    bytf_args = arg_parser.add_argument_group('BYTf related arguments')
+    bytf_args.add_argument('--bytf-byte-order', '-bo', type=int, default=METRICS['BYTF'].BYTE_ORDER,
+                           help='Byte n-gram order. (Default: %(default)s)')
+    bytf_args.add_argument('--bytf-char-order', '-co', type=int, default=METRICS['BYTF'].CHAR_ORDER,
+                           help='Character n-gram order. (Default: %(default)s)')
+    bytf_args.add_argument('--bytf-word-order', '-wo', type=int, default=METRICS['BYTF'].WORD_ORDER,
+                           help='Word n-gram order. (Default: %(default)s)')
+    bytf_args.add_argument('--bytf-beta', type=int, default=METRICS['BYTF'].BETA,
+                           help='Determine the importance of recall w.r.t precision. (Default: %(default)s)')
+    bytf_args.add_argument('--bytf-whitespace', action='store_true', default=False,
+                           help='Include whitespaces when extracting character n-grams. (Default: %(default)s)')
+    bytf_args.add_argument('--bytf-lowercase', action='store_true', default=False,
+                           help='Enable case-insensitivity. (Default: %(default)s)')
+    bytf_args.add_argument('--bytf-eps-smoothing', action='store_true', default=False,
+                           help='Enables epsilon smoothing similar to chrF++.py, NLTK and Moses; instead of effective order smoothing. (Default: %(default)s)')
+    
     # TER related arguments
     ter_args = arg_parser.add_argument_group("TER related arguments (The defaults replicate TERCOM's behavior)")
     ter_args.add_argument('--ter-case-sensitive', action='store_true',

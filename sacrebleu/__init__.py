@@ -21,10 +21,12 @@ __description__ = "Hassle-free computation of shareable, comparable, and reprodu
 from .compat import (
     corpus_bleu,
     corpus_chrf,
+    corpus_bytf,
     corpus_ter,
     raw_corpus_bleu,
     sentence_bleu,
     sentence_chrf,
+    sentence_bytf,
     sentence_ter,
 )
 from .dataset import DATASETS
@@ -60,6 +62,8 @@ __all__ = [
     "sentence_bleu",
     "corpus_chrf",
     "sentence_chrf",
+    "corpus_bytf",
+    "sentence_bytf",
     "corpus_ter",
     "sentence_ter",
     "__version__",

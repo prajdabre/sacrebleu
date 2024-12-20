@@ -245,7 +245,8 @@ class BYTF(Metric):
 
             # extract character n-grams
             if self.char_order > 0:
-                stats = extract_all_char_ngrams(ref, self.char_order, self.whitespace)
+                for n in range(1, self.char_order + 1):
+                    stats.extend([extract_char_ngrams(ref, n, self.whitespace)])
 
             # Check bytF+ mode
             if self.word_order > 0:

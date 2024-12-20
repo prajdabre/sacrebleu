@@ -32,7 +32,11 @@ reference_score_distribution = np.histogram(reference_scores, bins=np.arange(0, 
 pearson = stats.pearsonr(computed_scores, reference_scores)
 kendall = stats.kendalltau(computed_scores, reference_scores)
 
-print('Pearson correlation coefficient: ', pearson[0])
-print('Pearson p-value: ', pearson[1])
-print('Kendall tau: ', kendall[0])
-print('Kendall p-value: ', kendall[1])
+# print('Pearson correlation coefficient: ', pearson[0])
+# print('Pearson p-value: ', pearson[1])
+# print('Kendall tau: ', kendall[0])
+# print('Kendall p-value: ', kendall[1])
+
+## Print all 4 scores with a comma separator
+
+print(pearson[0], pearson[1], kendall[0], kendall[1], sep=',')

@@ -141,6 +141,10 @@ def parse_args():
                            help='Enable case-insensitivity. (Default: %(default)s)')
     chrf_args.add_argument('--chrf-eps-smoothing', action='store_true', default=False,
                            help='Enables epsilon smoothing similar to chrF++.py, NLTK and Moses; instead of effective order smoothing. (Default: %(default)s)')
+    chrf_args.add_argument('--chrf-tokenize', '-chrf-tok', choices=METRICS['BLEU'].TOKENIZERS, default=None,
+                           dest='chrf_tokenize',
+                           help='Tokenization method to use for chrf++ if word level backoff is used. If not provided, defaults to `zh` for Chinese, '
+                                '`ja-mecab` for Japanese, `ko-mecab` for Korean and `13a` (mteval) otherwise.')
 
     # BytF-related arguments
     bytf_args = arg_parser.add_argument_group('BYTf related arguments')
@@ -158,6 +162,10 @@ def parse_args():
                            help='Enable case-insensitivity. (Default: %(default)s)')
     bytf_args.add_argument('--bytf-eps-smoothing', action='store_true', default=False,
                            help='Enables epsilon smoothing similar to chrF++.py, NLTK and Moses; instead of effective order smoothing. (Default: %(default)s)')
+    bytf_args.add_argument('--bytf-tokenize', '-bytf-tok', choices=METRICS['BLEU'].TOKENIZERS, default=None,
+                           dest='bytf_tokenize',
+                           help='Tokenization method to use for bytf++ if word level backoff is used. If not provided, defaults to `zh` for Chinese, '
+                                '`ja-mecab` for Japanese, `ko-mecab` for Korean and `13a` (mteval) otherwise.')
     
     # TER related arguments
     ter_args = arg_parser.add_argument_group("TER related arguments (The defaults replicate TERCOM's behavior)")

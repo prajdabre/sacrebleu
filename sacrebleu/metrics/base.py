@@ -6,6 +6,7 @@ seamlessly with the rest of the codebase.
 """
 
 import json
+import sys
 import logging
 import statistics
 from abc import ABCMeta, abstractmethod
@@ -455,4 +456,6 @@ class Metric(metaclass=ABCMeta):
         """Creates and returns the signature for the metric. The creation
         of signatures is delayed as the number of references is resolved
         only at the point of reference caching."""
+        # print(self.__dict__.keys())
+        # sys.exit()
         return self._SIGNATURE_TYPE(self.__dict__)

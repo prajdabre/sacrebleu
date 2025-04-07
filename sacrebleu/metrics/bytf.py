@@ -6,7 +6,7 @@ from collections import Counter
 from ..utils import sum_of_lists
 from .base import Score, Signature, Metric
 from .helpers import extract_all_byte_ngrams, extract_char_ngrams, extract_word_ngrams
-
+from .bleu import _get_tokenizer, _TOKENIZERS
 
 class BYTFSignature(Signature):
     """A convenience class to represent the reproducibility signature for bytF.
@@ -31,6 +31,7 @@ class BYTFSignature(Signature):
             'nb': args['byte_order'],
             'nc': args['char_order'],
             'nw': args['word_order'],
+            'tok': args['tokenizer_signature'],
             'space': 'yes' if args['whitespace'] else 'no',
         })
 
@@ -89,6 +90,21 @@ class BYTF(Metric):
     # Cache string.punctuation for bytF+' punctuation stripper
     _PUNCTS = set('!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~')
 
+    ## Using proper tokenizers for different languages
+
+    TOKENIZERS = _TOKENIZERS.keys()
+
+    # mteval-v13a.pl tokenizer unless Chinese or Japanese is provided
+    TOKENIZER_DEFAULT = '13a'
+
+    # Some language specific mappings to use if `trg_lang` is given
+    # and the tokenizer is not explicitly specified
+    _TOKENIZER_MAP = {
+        'zh': 'zh',
+        'ja': 'ja-mecab',
+        'ko': 'ko-mecab',
+    }
+
     _SIGNATURE_TYPE = BYTFSignature
 
     def __init__(self, byte_order: int = BYTE_ORDER,
@@ -98,11 +114,14 @@ class BYTF(Metric):
                  lowercase: bool = False,
                  whitespace: bool = False,
                  eps_smoothing: bool = False,
+                 tokenize: Optional[str] = None,
+                 trg_lang: str = '',
                  references: Optional[Sequence[Sequence[str]]] = None):
         """`BYTF` initializer."""
         super().__init__()
 
         self.beta = beta
+        self.trg_lang = trg_lang
         self.byte_order = byte_order
         self.char_order = char_order
         self.word_order = word_order
@@ -110,6 +129,39 @@ class BYTF(Metric):
         self.lowercase = lowercase
         self.whitespace = whitespace
         self.eps_smoothing = eps_smoothing
+
+        if self.word_order > 0: ## We need to choose a tokenizer
+            # If the tokenizer wasn't specified, choose it according to the
+            # following logic. We use 'v13a' except for ZH and JA. Note that
+            # this logic can only be applied when sacrebleu knows the target
+            # language, which is only the case for builtin datasets.
+            if tokenize is None:
+                best_tokenizer = self.TOKENIZER_DEFAULT
+
+                # Set `zh` or `ja-mecab` or `ko-mecab` if target language is provided
+                if self.trg_lang in self._TOKENIZER_MAP:
+                    best_tokenizer = self._TOKENIZER_MAP[self.trg_lang]
+            else:
+                best_tokenizer = tokenize
+                if self.trg_lang == 'zh' and best_tokenizer != 'zh':
+                    sacrelogger.warning(
+                        "Consider using the 'zh' or 'spm' tokenizer for Chinese.")
+                if self.trg_lang == 'ja' and best_tokenizer != 'ja-mecab':
+                    sacrelogger.warning(
+                        "Consider using the 'ja-mecab' or 'spm' tokenizer for Japanese.")
+                if self.trg_lang == 'ko' and best_tokenizer != 'ko-mecab':
+                    sacrelogger.warning(
+                        "Consider using the 'ko-mecab' or 'spm' tokenizer for Korean.")
+
+            # Create the tokenizer
+            self.tokenizer = _get_tokenizer(best_tokenizer)()
+
+            # Build the signature
+            self.tokenizer_signature = self.tokenizer.signature()
+        else:
+            self.tokenizer = None
+            self.tokenizer_signature = ''
+
 
         if references is not None:
             # Pre-compute reference ngrams
@@ -165,7 +217,10 @@ class BYTF(Metric):
         :param sent: The input sentence string.
         :return: The pre-processed output string.
         """
-        return sent.lower() if self.lowercase else sent
+        if self.lowercase:
+            sent = sent.lower()
+
+        return self.tokenizer(sent.rstrip()) if self.word_order > 0 else sent
 
     def _compute_f_score(self, statistics: List[int]) -> float:
         """Compute the bytF score given the n-gram match statistics.

@@ -2,7 +2,9 @@
 
 ## 1. Overview
 
-This fork of **[SacreBLEU](https://github.com/mjpost/sacrebleu)** adds the **BYTF family** of byte-level metrics:
+This repo is for our BYTF paper which is accepted to MT Summit 2025.
+
+It is a fork of **[SacreBLEU](https://github.com/mjpost/sacrebleu)** with the implementation of byte-level metrics:
 
 | Metric | Granularity | Flags |
 |--------|-------------|-------|
@@ -49,7 +51,7 @@ If you use this work, please cite:
 
 ```bibtex
 @inproceedings{bytf2025,
-  title     = "BYT_F: How Good Are Byte-Level n-Gram F-Scores for Automatic Machine Translation Evaluation?",
+  title     = "BYTF: How Good Are Byte-Level n-Gram F-Scores for Automatic Machine Translation Evaluation?",
   author    = "Dabre, Raj and Kaing, Hour and Song, Haiyue",
   year      = "2025",
   month     = "jun" 

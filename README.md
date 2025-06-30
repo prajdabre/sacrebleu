@@ -53,7 +53,10 @@ If you use this work, please cite:
 @inproceedings{bytf2025,
   title     = "BYTF: How Good Are Byte-Level n-Gram F-Scores for Automatic Machine Translation Evaluation?",
   author    = "Dabre, Raj and Kaing, Hour and Song, Haiyue",
+  booktitle = "Proceedings of Machine Translation Summit XX, Vol. 1: Research Track",
+  month     = "jun",
   year      = "2025",
-  month     = "jun" 
+  address   = "Geneva, Switzerland",
+  publisher = "European Association for Machine Translation"
 }
 ```
